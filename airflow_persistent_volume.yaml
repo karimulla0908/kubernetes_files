@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-perisistent
+  labels:
+    io.kompose.service: airflow-perisistent
+spec:
+  replicas: 1  # Start with 1 replica for initial deployment
+  selector:
+    matchLabels:
+      io.kompose.service: airflow-perisistent
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: airflow-perisistent
+    spec:
+      containers:
+        - name: airflow-perisistent
+          image: airflow0908.azurecr.io/karim0920/my_airflow_custom_image:latest
+          env:
+            # Add environment variables if needed
+          volumeMounts:
+            - name: airflow-worker-claim0
+              mountPath: /opt/airflow/dags
+            - name: airflow-worker-claim0
+              mountPath: /opt/airflow/plugins
+            - name: airflow-worker-claim0
+              mountPath: /opt/airflow/logs
+      volumes:
+        - name: airflow-worker-claim0
+          persistentVolumeClaim:
+            claimName: airflow-worker-claim0

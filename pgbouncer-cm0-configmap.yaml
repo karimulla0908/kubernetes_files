@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgbouncer-cm0
+data:
+  pgbouncer.ini: |
+    [databases]
+    airflow = host=postgres port=5432 dbname=airflow user=airflow password=airflow
+
+    [pgbouncer]
+    listen_addr = 0.0.0.0
+    listen_port = 6432
+    auth_type = md5
+    auth_file = /etc/pgbouncer/userlist.txt
+    logfile = /var/log/pgbouncer/pgbouncer.log
+    pidfile = /var/run/pgbouncer/pgbouncer.pid
+    admin_users = postgres, airflow
+    stats_users = postgres, airflow
+    pool_mode = session
+    max_client_conn = 100
+    default_pool_size = 20
+  userlist.txt: |
+    "airflow" "md5$(echo -n 'airflow' | md5sum | awk '{print $1}')"
